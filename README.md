@@ -1,3 +1,10 @@
+> Portfolio status: legacy study notes.
+>
+> This repository is preserved as part of my learning history. It is not one of
+> my curated portfolio projects and may be archived or made private later.
+> Current portfolio projects prioritize original implementation, tests,
+> architecture documentation, CI/CD, and production-oriented practices.
+
 <p align="center">
   <img  src="https://user-images.githubusercontent.com/105243897/208307769-c229bb3f-0963-499e-a258-3218ddcfe336.png">
 </p>
