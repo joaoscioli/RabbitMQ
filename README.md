@@ -32,6 +32,7 @@ history and will be progressively reorganized into clearer labs.
 
 Current sections:
 
+- [Messaging Fundamentals](docs/messaging-fundamentals.md)
 - [Repository Roadmap](docs/roadmap.md)
 
 Planned sections:

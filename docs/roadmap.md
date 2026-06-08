@@ -12,9 +12,9 @@ professional backend messaging lab.
 
 ## Phase 2: Messaging Fundamentals
 
-- Document queues, exchanges, bindings, and routing keys.
-- Explain direct, fanout, topic, and headers exchanges.
-- Add simple diagrams for producer, exchange, queue, and consumer flow.
+- Document queues, exchanges, bindings, and routing keys. Done.
+- Explain direct, fanout, topic, and headers exchanges. Done.
+- Add simple diagrams for producer, exchange, queue, and consumer flow. Done.
 
 ## Phase 3: Spring Boot Producer and Consumer
 
