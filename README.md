@@ -33,11 +33,11 @@ history and will be progressively reorganized into clearer labs.
 Current sections:
 
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)
+- [Direct Exchange Example](docs/direct-exchange.md)
 - [Repository Roadmap](docs/roadmap.md)
 
 Planned sections:
 
-- direct exchange example;
 - topic exchange example;
 - dead-letter queue example;
 - retry strategy example;
