@@ -19,6 +19,7 @@ professional backend messaging lab.
 ## Phase 3: Spring Boot Producer and Consumer
 
 - Add a direct exchange example. Done.
+- Add a topic exchange example. Done.
 - Reorganize the existing Spring Boot example.
 - Add a message producer with a clear domain event.
 - Add a consumer with focused responsibilities.
