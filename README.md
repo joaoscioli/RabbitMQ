@@ -35,11 +35,11 @@ Current sections:
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)
 - [Direct Exchange Example](docs/direct-exchange.md)
 - [Topic Exchange Example](docs/topic-exchange.md)
+- [Dead-Letter Queue Example](docs/dead-letter-queue.md)
 - [Repository Roadmap](docs/roadmap.md)
 
 Planned sections:
 
-- dead-letter queue example;
 - retry strategy example;
 - Spring Boot messaging service;
 - test strategy for message-driven code.

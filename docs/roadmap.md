@@ -29,7 +29,7 @@ professional backend messaging lab.
 
 - Add manual acknowledgement notes.
 - Add retry strategy documentation.
-- Add dead-letter queue example.
+- Add dead-letter queue example. Done.
 - Explain idempotency and duplicate message handling.
 
 ## Phase 5: Testing and Observability
