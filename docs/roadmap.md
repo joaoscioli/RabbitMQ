@@ -27,7 +27,7 @@ professional backend messaging lab.
 
 ## Phase 4: Reliability Patterns
 
-- Add manual acknowledgement notes.
+- Add manual acknowledgement notes. Done.
 - Add retry strategy documentation. Done.
 - Add dead-letter queue example. Done.
 - Explain idempotency and duplicate message handling. Done.

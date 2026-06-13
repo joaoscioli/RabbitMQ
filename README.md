@@ -36,6 +36,7 @@ Current sections:
 - [Direct Exchange Example](docs/direct-exchange.md)
 - [Topic Exchange Example](docs/topic-exchange.md)
 - [Dead-Letter Queue Example](docs/dead-letter-queue.md)
+- [Manual Acknowledgement](docs/manual-acknowledgement.md)
 - [Retry Strategy Example](docs/retry-strategy.md)
 - [Repository Roadmap](docs/roadmap.md)
 
