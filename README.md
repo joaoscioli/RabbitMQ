@@ -37,13 +37,13 @@ Current sections:
 - [Topic Exchange Example](docs/topic-exchange.md)
 - [Dead-Letter Queue Example](docs/dead-letter-queue.md)
 - [Manual Acknowledgement](docs/manual-acknowledgement.md)
+- [Message Testing Strategy](docs/message-testing-strategy.md)
 - [Retry Strategy Example](docs/retry-strategy.md)
 - [Repository Roadmap](docs/roadmap.md)
 
 Planned sections:
 
 - Spring Boot messaging service;
-- test strategy for message-driven code.
 
 ## Portfolio Role
 
