@@ -37,6 +37,7 @@ Current sections:
 - [Topic Exchange Example](docs/topic-exchange.md)
 - [Dead-Letter Queue Example](docs/dead-letter-queue.md)
 - [Manual Acknowledgement](docs/manual-acknowledgement.md)
+- [Idempotency In Message Consumers](docs/idempotency.md)
 - [Message Testing Strategy](docs/message-testing-strategy.md)
 - [Message Contract Template](docs/message-contract-template.md)
 - [Retry Strategy Example](docs/retry-strategy.md)
