@@ -38,6 +38,7 @@ Current sections:
 - [Dead-Letter Queue Example](docs/dead-letter-queue.md)
 - [Manual Acknowledgement](docs/manual-acknowledgement.md)
 - [Idempotency In Message Consumers](docs/idempotency.md)
+- [Local RabbitMQ Setup](docs/local-rabbitmq-setup.md)
 - [Message Testing Strategy](docs/message-testing-strategy.md)
 - [Message Contract Template](docs/message-contract-template.md)
 - [Retry Strategy Example](docs/retry-strategy.md)
