@@ -64,6 +64,10 @@ Consumer logs should include:
 
 Logs should not include secrets, full personal data, or sensitive payloads.
 
+The sample Spring Boot consumer uses the application logger instead of
+`System.out` so local examples follow the same direction expected in production
+services.
+
 ## Alerts
 
 Useful alerts include:
