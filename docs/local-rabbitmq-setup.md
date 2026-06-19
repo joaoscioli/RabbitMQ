@@ -10,6 +10,9 @@ Start the broker from the repository root:
 docker compose up -d
 ```
 
+For local defaults, copy `.env.example` to `.env` or rely on the fallback
+values defined in `docker-compose.yml`.
+
 The service is defined in `docker-compose.yml`:
 
 ```yaml
@@ -21,8 +24,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
 ```
 
 ## Useful URLs
