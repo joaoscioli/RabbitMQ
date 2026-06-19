@@ -30,6 +30,9 @@ This lab focuses on:
 The existing `spring-rabbitMQ` folder is preserved as part of the repository
 history and will be progressively reorganized into clearer labs.
 
+The repository now includes a local `docker-compose.yml` for running RabbitMQ
+with the management UI during development.
+
 Current sections:
 
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)

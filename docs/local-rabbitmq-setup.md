@@ -4,12 +4,19 @@ This document describes a local setup direction for RabbitMQ examples.
 
 ## Docker Compose Service
 
-A simple local setup can use RabbitMQ with the management UI:
+Start the broker from the repository root:
+
+```bash
+docker compose up -d
+```
+
+The service is defined in `docker-compose.yml`:
 
 ```yaml
 services:
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq-messaging-lab
     ports:
       - "5672:5672"
       - "15672:15672"
