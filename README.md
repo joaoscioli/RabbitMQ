@@ -39,6 +39,7 @@ Current sections:
 - [Direct Exchange Example](docs/direct-exchange.md)
 - [Topic Exchange Example](docs/topic-exchange.md)
 - [Dead-Letter Queue Example](docs/dead-letter-queue.md)
+- [Message Replay](docs/message-replay.md)
 - [Manual Acknowledgement](docs/manual-acknowledgement.md)
 - [Consumer Error Handling](docs/consumer-error-handling.md)
 - [Idempotency In Message Consumers](docs/idempotency.md)
