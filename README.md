@@ -45,6 +45,7 @@ Current sections:
 - [Idempotency In Message Consumers](docs/idempotency.md)
 - [Local RabbitMQ Setup](docs/local-rabbitmq-setup.md)
 - [Messaging Observability](docs/observability.md)
+- [Backpressure](docs/backpressure.md)
 - [Topology Naming](docs/topology-naming.md)
 - [Message Testing Strategy](docs/message-testing-strategy.md)
 - [Message Contract Template](docs/message-contract-template.md)
