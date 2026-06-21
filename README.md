@@ -40,6 +40,7 @@ Current sections:
 - [Topic Exchange Example](docs/topic-exchange.md)
 - [Dead-Letter Queue Example](docs/dead-letter-queue.md)
 - [Manual Acknowledgement](docs/manual-acknowledgement.md)
+- [Consumer Error Handling](docs/consumer-error-handling.md)
 - [Idempotency In Message Consumers](docs/idempotency.md)
 - [Local RabbitMQ Setup](docs/local-rabbitmq-setup.md)
 - [Messaging Observability](docs/observability.md)
