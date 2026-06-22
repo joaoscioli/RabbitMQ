@@ -44,6 +44,7 @@ Current sections:
 - [Consumer Error Handling](docs/consumer-error-handling.md)
 - [Idempotency In Message Consumers](docs/idempotency.md)
 - [Local RabbitMQ Setup](docs/local-rabbitmq-setup.md)
+- [CI Workflow](docs/ci.md)
 - [Messaging Observability](docs/observability.md)
 - [Backpressure](docs/backpressure.md)
 - [Topology Naming](docs/topology-naming.md)
