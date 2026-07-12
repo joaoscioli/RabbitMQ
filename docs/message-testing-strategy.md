@@ -37,9 +37,16 @@ Message contracts should document:
 - versioning approach;
 - producer and consumer ownership.
 
+## Publishing Checks
+
+Producer configuration should make unroutable messages visible. Mandatory
+publishing is one option because it allows the application to detect when a
+message cannot be routed to a queue.
+
 ## Interview Talking Points
 
 - Not every messaging test needs a broker.
 - Unit tests protect handler behavior.
 - Integration tests protect wiring and broker assumptions.
 - Message contracts reduce producer-consumer drift.
+- Producers should avoid silently dropping unroutable messages.
