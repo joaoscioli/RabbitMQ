@@ -38,3 +38,9 @@ professional backend messaging lab.
 - Document what should be tested without a real broker.
 - Document what should be tested with integration tests.
 - Add logging and metrics notes for message-driven systems.
+
+## Phase 6: Producer Reliability
+
+- Add publisher return handling for unroutable messages.
+- Document how mandatory publishing complements dead-letter queues.
+- Add a small domain event example with explicit routing-key ownership.
