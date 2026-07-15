@@ -63,6 +63,12 @@ This is a supporting repository in my backend portfolio. It complements the
 main Spring Boot API project by showing messaging knowledge and asynchronous
 architecture concepts.
 
+## Interview Checkpoint
+
+A reviewer should focus on routing, dead-letter handling, idempotency, and
+producer safeguards. These topics show messaging reliability beyond simply
+sending and consuming a message.
+
 ## Repository Principles
 
 - Preserve learning history.
