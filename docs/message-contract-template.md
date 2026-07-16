@@ -63,3 +63,10 @@ billing.subscription.created
 - Routing belongs in documentation, not only code.
 - Versioning matters because producers and consumers evolve independently.
 - Replay rules should consider idempotency.
+
+## Questions This Template Can Answer
+
+- Who owns a message contract when multiple services depend on it?
+- What happens when a message cannot be routed?
+- Which failures should be retried and which should go to a DLQ?
+- How does idempotency make replay safer?
