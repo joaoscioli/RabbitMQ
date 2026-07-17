@@ -27,3 +27,8 @@ signals demonstrated by this repository.
 - Discuss retries, dead letters, and idempotency together.
 - Show how observability changes the way messaging systems are operated.
 - Explain why publisher guarantees matter before adding more consumers.
+
+## Next Practical Step
+
+Add publisher return handling for mandatory messages so unroutable events become
+observable application behavior instead of broker-level trivia.
