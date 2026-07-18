@@ -69,6 +69,12 @@ A reviewer should focus on routing, dead-letter handling, idempotency, and
 producer safeguards. These topics show messaging reliability beyond simply
 sending and consuming a message.
 
+## Portfolio Proof
+
+This repository proves asynchronous architecture awareness. It shows message
+flow, failure handling, replay, idempotency, and producer reliability as
+engineering concerns.
+
 ## Repository Principles
 
 - Preserve learning history.
