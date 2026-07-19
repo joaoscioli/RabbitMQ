@@ -22,6 +22,7 @@ This lab focuses on:
 - exchange and queue routing;
 - dead-letter queues;
 - retry and failure handling;
+- producer safeguards for unroutable messages;
 - observability for messaging systems;
 - small examples that can be explained in interviews.
 
