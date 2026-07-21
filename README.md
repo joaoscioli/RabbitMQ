@@ -53,6 +53,7 @@ Current sections:
 - [Message Contract Template](docs/message-contract-template.md)
 - [Retry Strategy Example](docs/retry-strategy.md)
 - [Repository Roadmap](docs/roadmap.md)
+- [Changelog](CHANGELOG.md)
 
 Planned sections:
 
