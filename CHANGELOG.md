@@ -2,6 +2,9 @@
 
 This project follows small, reviewable increments. Dates use `YYYY-MM-DD`.
 
+Review cadence: each portfolio update should improve message reliability,
+contract clarity, operational visibility, or failure handling.
+
 ## Unreleased
 
 - Planned: publisher return handling for unroutable messages.
