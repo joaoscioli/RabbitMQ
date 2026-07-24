@@ -11,6 +11,11 @@ Use this changelog to show messaging maturity. The strongest narrative is moving
 from simple send/consume examples to routing, contracts, idempotency, and
 producer-side failure visibility.
 
+## Review Readiness
+
+Ready for interview review when messaging examples discuss routing, retries,
+DLQs, idempotency, and producer failure visibility together.
+
 ## Unreleased
 
 - Planned: publisher return handling for unroutable messages.
