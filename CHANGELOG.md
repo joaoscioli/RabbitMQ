@@ -16,6 +16,9 @@ producer-side failure visibility.
 Ready for interview review when messaging examples discuss routing, retries,
 DLQs, idempotency, and producer failure visibility together.
 
+Current public signal: RabbitMQ documentation and Spring Boot examples focused
+on reliable messaging instead of basic queue usage only.
+
 ## Unreleased
 
 - Planned: publisher return handling for unroutable messages.
