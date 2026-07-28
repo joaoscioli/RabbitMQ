@@ -37,6 +37,7 @@ with the management UI during development.
 Current sections:
 
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)
+- [Demo Script](docs/demo-script.md)
 - [Direct Exchange Example](docs/direct-exchange.md)
 - [Topic Exchange Example](docs/topic-exchange.md)
 - [Dead-Letter Queue Example](docs/dead-letter-queue.md)
