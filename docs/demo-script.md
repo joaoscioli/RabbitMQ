@@ -15,3 +15,9 @@ Use this short script to present the repository in a technical interview.
 - Messaging reliability is more than sending and consuming.
 - Routing and contracts should be documented.
 - Replay is safer when idempotency is designed first.
+
+## Before The Interview
+
+- Be ready to explain exchange, routing key, queue, and DLQ together.
+- Prepare one duplicate-message scenario.
+- Know why producer-side unroutable messages matter.
