@@ -21,3 +21,9 @@ Use this short script to present the repository in a technical interview.
 - Be ready to explain exchange, routing key, queue, and DLQ together.
 - Prepare one duplicate-message scenario.
 - Know why producer-side unroutable messages matter.
+
+## Avoid Saying
+
+- "RabbitMQ makes the system reliable." Instead, explain retries, DLQs, and
+  idempotency.
+- "Async is always better." Instead, explain when messaging adds complexity.
