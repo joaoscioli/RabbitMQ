@@ -22,6 +22,13 @@ Use this short script to present the repository in a technical interview.
 - Prepare one duplicate-message scenario.
 - Know why producer-side unroutable messages matter.
 
+## Evidence To Open
+
+- `spring-rabbitMQ/src/main/java/com/example/springrabbitMQ/SenderConfig.java`
+- `spring-rabbitMQ/src/main/java/com/example/springrabbitMQ/QueueSender.java`
+- `docs/idempotency.md`
+- `docs/dead-letter-queue.md`
+
 ## Avoid Saying
 
 - "RabbitMQ makes the system reliable." Instead, explain retries, DLQs, and
