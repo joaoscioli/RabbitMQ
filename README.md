@@ -37,6 +37,7 @@ with the management UI during development.
 Current sections:
 
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)
+- [Reviewer Scorecard](docs/reviewer-scorecard.md)
 - [Demo Script](docs/demo-script.md)
 - [Interview Questions](docs/interview-questions.md)
 - [Direct Exchange Example](docs/direct-exchange.md)
