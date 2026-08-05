@@ -39,6 +39,7 @@ Current sections:
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)
 - [Reviewer Scorecard](docs/reviewer-scorecard.md)
 - [Technical Depth Map](docs/technical-depth-map.md)
+- [Portfolio Positioning](docs/portfolio-positioning.md)
 - [Demo Script](docs/demo-script.md)
 - [Interview Questions](docs/interview-questions.md)
 - [Direct Exchange Example](docs/direct-exchange.md)
