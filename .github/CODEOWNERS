@@ -1,2 +1,11 @@
-# Default repository owner
+# Repository owner
 * @joaoscioli
+
+# Messaging implementation and topology examples
+/spring-rabbitMQ/ @joaoscioli
+/docker-compose.yml @joaoscioli
+
+# Messaging documentation and GitHub workflow
+/docs/ @joaoscioli
+/.github/ @joaoscioli
+README.md @joaoscioli
