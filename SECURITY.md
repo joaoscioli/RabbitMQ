@@ -1,25 +1,28 @@
 # Security Policy
 
-This repository is a RabbitMQ messaging lab. Security review focuses on safe
-configuration, message handling, and avoiding leaked credentials.
+This repository is a RabbitMQ messaging lab, so security feedback should focus
+on local configuration, message data handling, dependencies, and operational
+guidance.
 
 ## Supported Scope
 
-Security review focuses on:
+Security feedback is welcome for:
 
-- RabbitMQ credentials in local configuration;
-- unsafe queue or exchange examples;
-- message payloads that include sensitive data;
-- replay behavior that could duplicate sensitive operations;
-- dependency risk in the Spring Boot example.
+- unsafe RabbitMQ defaults in examples;
+- accidental secret exposure;
+- dependency vulnerabilities;
+- message payload examples that include sensitive data;
+- misleading operational guidance around retries, DLQs, or observability.
 
-## Reporting A Security Concern
+## Reporting
 
-Open a concise issue describing the affected flow, configuration, or document.
-Do not include real broker credentials or private payloads.
+Please do not open a public issue with sensitive details.
 
-## Development Practices
+Send a private report to `joaoscioli@outlook.com` with the affected file, the
+risk, and a suggested mitigation when possible.
 
-- Keep broker credentials out of Git.
-- Use synthetic message payloads.
-- Document security assumptions for replay, retries, and dead-letter flows.
+## Security Expectations
+
+- Local credentials must stay example-only.
+- Message examples should avoid sensitive personal or business data.
+- Observability examples should avoid logging full sensitive payloads.
