@@ -15,6 +15,13 @@ This repository is maintained as a RabbitMQ messaging lab.
 - Check whether the message contract or topology documentation needs an update.
 - Keep broker assumptions explicit.
 
+## Portfolio Contribution Discipline
+
+- Start from a small issue with a clear reviewer signal.
+- Keep each pull request narrow enough to explain in five minutes.
+- Prefer changes that connect message flow to a failure mode.
+- Avoid adding queues or consumers without explaining reliability impact.
+
 ## Review Focus
 
 Reviewers should look for reliable consumer behavior, clear topology naming,
