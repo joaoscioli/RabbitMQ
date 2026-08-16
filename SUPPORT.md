@@ -17,6 +17,11 @@ clarity of the messaging examples.
 - A local broker setup step is missing.
 - A test should cover duplicate, replay, or dead-letter behavior.
 
+## Review Questions
+
+For portfolio or interview review, include the queue, exchange, consumer,
+producer, or document being discussed and the failure mode you want to evaluate.
+
 ## Out Of Scope
 
 - Production broker operations support.
