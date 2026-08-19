@@ -88,6 +88,12 @@ This repository proves asynchronous architecture awareness. It shows message
 flow, failure handling, replay, idempotency, and producer reliability as
 engineering concerns.
 
+## Fast Review Path
+
+1. Read the [30-Second Pitch](docs/30-second-pitch.md) to understand the repository signal.
+2. Open the [Interview Case Study](docs/interview-case-study.md) to follow the messaging story.
+3. Inspect DLQ, idempotency, retry, and producer safeguard docs to validate reliability thinking.
+
 ## Repository Principles
 
 - Preserve learning history.
