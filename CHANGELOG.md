@@ -24,6 +24,15 @@ on reliable messaging instead of basic queue usage only.
 - Planned: publisher return handling for unroutable messages.
 - Planned: explicit domain event example with routing-key ownership.
 
+## 2026-08 Interview Readiness
+
+- Added fast review path, interview case study, and stronger messaging talking
+  points for technical interviews.
+- Refined GitHub hygiene with issue, pull request, CODEOWNERS, security, support,
+  contributing, and Dependabot configuration updates.
+- Clarified how to present reliability through retries, DLQs, idempotency,
+  replay, and producer-side failure visibility.
+
 ## 2026-07 Portfolio Hardening
 
 - Added mandatory publishing configuration.
