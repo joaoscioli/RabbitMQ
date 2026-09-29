@@ -57,6 +57,7 @@ Current sections:
 - [Deep Dive Prompts](docs/deep-dive-prompts.md)
 - [Hiring Signal](docs/hiring-signal.md)
 - [Technical Differentiators](docs/technical-differentiators.md)
+- [Next Technical Evolution](docs/next-technical-evolution.md)
 - [Reviewer Scorecard](docs/reviewer-scorecard.md)
 - [Technical Depth Map](docs/technical-depth-map.md)
 - [Portfolio Positioning](docs/portfolio-positioning.md)
