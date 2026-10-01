@@ -16,6 +16,9 @@ public class QueueSender {
     }
 
     public void send(String order) {
+        if (order == null || order.isBlank()) {
+            throw new IllegalArgumentException("order must not be blank");
+        }
         rabbitTemplate.convertAndSend(this.queue.getName(), order);
     }
 }
