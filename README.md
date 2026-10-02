@@ -34,6 +34,12 @@ history and will be progressively reorganized into clearer labs.
 The repository now includes a local `docker-compose.yml` for running RabbitMQ
 with the management UI during development.
 
+The consumer rejects null, empty, and whitespace-only payloads with
+`AmqpRejectAndDontRequeueException` so malformed messages do not loop through
+redelivery. The current queue has no dead-letter exchange: rejected messages
+are discarded. Broker-free `QueueConsumerTests` cover the rejection contract;
+broker acknowledgement and future DLQ routing require integration tests.
+
 Current sections:
 
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)
