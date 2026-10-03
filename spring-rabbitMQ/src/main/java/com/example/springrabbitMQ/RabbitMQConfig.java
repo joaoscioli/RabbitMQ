@@ -6,12 +6,13 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class RabbitMQConfig {
     @Bean
-    public Queue testeQueue() {
-        return new Queue("teste", true);
+    public Queue testeQueue(@Value("${queue.name}") String queueName) {
+        return new Queue(queueName, true);
     }
 
     @Bean

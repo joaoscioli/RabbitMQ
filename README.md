@@ -40,6 +40,11 @@ redelivery. The current queue has no dead-letter exchange: rejected messages
 are discarded. Broker-free `QueueConsumerTests` cover the rejection contract;
 broker acknowledgement and future DLQ routing require integration tests.
 
+`queue.name` is the single source for the durable queue declaration, direct
+exchange binding, producer destination, and consumer listener. Broker-free
+`QueueTopologyTests` exercise an overridden queue name; live routing still
+requires a running RabbitMQ broker.
+
 Current sections:
 
 - [Messaging Fundamentals](docs/messaging-fundamentals.md)
