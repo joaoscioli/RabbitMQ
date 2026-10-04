@@ -4,6 +4,8 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +14,16 @@ import org.springframework.beans.factory.annotation.Value;
 public class RabbitMQConfig {
     @Bean
     public Queue testeQueue(@Value("${queue.name}") String queueName) {
-        return new Queue(queueName, true);
+        return QueueBuilder.durable(queueName)
+                .deadLetterExchange("")
+                .deadLetterRoutingKey(queueName + ".dlq")
+                .build();
+    }
+
+    @Bean
+    public Queue deadLetterQueue(@Value("${queue.name}") String queueName) {
+        // The default exchange routes by queue name; no extra binding is needed.
+        return QueueBuilder.durable(queueName + ".dlq").build();
     }
 
     @Bean
@@ -21,7 +32,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    Binding testeBinding(Queue testeQueue, DirectExchange exchange) {
+    Binding testeBinding(@Qualifier("testeQueue") Queue testeQueue, DirectExchange exchange) {
         return BindingBuilder.bind(testeQueue).to(exchange).with("teste-routing-key");
     }
 }

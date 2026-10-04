@@ -2,6 +2,7 @@ package com.example.springrabbitMQ;
 
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ public class QueueSender {
     private final RabbitTemplate rabbitTemplate;
     private final Queue queue;
 
-    public QueueSender(RabbitTemplate rabbitTemplate, Queue queue) {
+    public QueueSender(RabbitTemplate rabbitTemplate, @Qualifier("testeQueue") Queue queue) {
         this.rabbitTemplate = rabbitTemplate;
         this.queue = queue;
     }

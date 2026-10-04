@@ -159,3 +159,20 @@ engineering concerns.
 - Why retries need limits and dead-letter handling.
 - How message-driven systems fail.
 - How producers and consumers stay decoupled.
+
+## Runnable Dead-Letter Topology
+
+The Spring example declares a durable `${queue.name}.dlq` and configures the
+source queue to dead-letter rejected messages through the default exchange
+using the DLQ name as routing key. Blank payloads rejected by `QueueConsumer`
+can therefore be retained for inspection. No automatic DLQ consumer or replay
+is configured, preventing an endless rejection loop.
+
+RabbitMQ cannot redeclare an existing queue with different arguments. For this
+example, select a fresh `queue.name` before starting against a broker that
+already has the old declaration; a production rollout needs a planned queue
+migration or broker policy. Do not remove existing queues containing messages.
+
+`QueueTopologyTests` verifies declarations, routing arguments, durability and
+producer destination without a broker. Actual dead-letter delivery still needs
+a broker integration test; this does not implement retry or idempotency.

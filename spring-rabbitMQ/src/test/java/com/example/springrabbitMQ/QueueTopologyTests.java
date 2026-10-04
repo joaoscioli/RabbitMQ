@@ -28,12 +28,21 @@ class QueueTopologyTests {
     private RabbitTemplate rabbitTemplate;
 
     @Test
-    void customQueueNameIsSharedByTheSingleDeclarationBindingAndProducer() {
+    void customQueueNameDefinesProducerDestinationAndDeadLetterRoute() {
         var queues = context.getBeansOfType(Queue.class);
-        assertThat(queues).hasSize(1);
-        var queue = queues.values().iterator().next();
+        assertThat(queues).containsOnlyKeys("testeQueue", "deadLetterQueue");
+        var queue = queues.get("testeQueue");
         assertThat(queue.getName()).isEqualTo("portfolio-orders");
         assertThat(queue.isDurable()).isTrue();
+        assertThat(queue.getArguments())
+                .containsEntry("x-dead-letter-exchange", "")
+                .containsEntry("x-dead-letter-routing-key", "portfolio-orders.dlq");
+        var deadLetterQueue = queues.get("deadLetterQueue");
+        assertThat(deadLetterQueue.getName()).isEqualTo("portfolio-orders.dlq");
+        assertThat(deadLetterQueue.isDurable()).isTrue();
+        assertThat(deadLetterQueue.getArguments()).isEmpty();
+        assertThat(deadLetterQueue.isExclusive()).isFalse();
+        assertThat(deadLetterQueue.isAutoDelete()).isFalse();
 
         var binding = context.getBean(Binding.class);
         assertThat(binding.getDestination()).isEqualTo(queue.getName());
