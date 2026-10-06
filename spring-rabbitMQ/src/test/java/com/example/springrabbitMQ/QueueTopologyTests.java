@@ -11,6 +11,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import org.springframework.amqp.core.MessagePostProcessor;
 
 @SpringBootTest(properties = {
         "queue.name=portfolio-orders",
@@ -50,6 +53,6 @@ class QueueTopologyTests {
         assertThat(binding.getRoutingKey()).isEqualTo("teste-routing-key");
 
         sender.send("order-123");
-        verify(rabbitTemplate).convertAndSend("portfolio-orders", "order-123");
+        verify(rabbitTemplate).convertAndSend(eq("portfolio-orders"), eq((Object) "order-123"), any(MessagePostProcessor.class));
     }
 }

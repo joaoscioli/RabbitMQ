@@ -36,9 +36,9 @@ with the management UI during development.
 
 The consumer rejects null, empty, and whitespace-only payloads with
 `AmqpRejectAndDontRequeueException` so malformed messages do not loop through
-redelivery. The current queue has no dead-letter exchange: rejected messages
-are discarded. Broker-free `QueueConsumerTests` cover the rejection contract;
-broker acknowledgement and future DLQ routing require integration tests.
+redelivery. The source queue routes these rejections to its durable DLQ.
+Broker-free `QueueConsumerTests` cover the rejection contract;
+broker acknowledgement and DLQ delivery require integration tests.
 
 `queue.name` is the single source for the durable queue declaration, direct
 exchange binding, producer destination, and consumer listener. Broker-free
@@ -176,3 +176,13 @@ migration or broker policy. Do not remove existing queues containing messages.
 `QueueTopologyTests` verifies declarations, routing arguments, durability and
 producer destination without a broker. Actual dead-letter delivery still needs
 a broker integration test; this does not implement retry or idempotency.
+
+## Message IDs for Replay
+
+`QueueSender.send(payload)` assigns a new UUID to the AMQP `messageId` property.
+Call `send(payload, "event-456")` with a stable application event ID when replaying
+the same event; the producer preserves that ID and the payload. Blank IDs fail
+before publishing. `QueueSenderTests` checks generated IDs, replay ID stability,
+and unchanged message bytes without a broker. Consumers still need durable
+deduplication storage before this can provide idempotent processing; generating
+a fresh ID for each replay would defeat deduplication.
