@@ -186,3 +186,11 @@ before publishing. `QueueSenderTests` checks generated IDs, replay ID stability,
 and unchanged message bytes without a broker. Consumers still need durable
 deduplication storage before this can provide idempotent processing; generating
 a fresh ID for each replay would defeat deduplication.
+
+## Publish with a stable event ID
+
+`POST /messages` accepts JSON such as `{"payload":"order-123","messageId":"event-456"}`
+and returns HTTP 202 after the sender call completes. Missing or blank fields and malformed
+JSON return HTTP 400 before publishing. Repeating the request publishes again with the same
+AMQP message ID, allowing a future durable consumer to recognize a replay. This endpoint
+does not deduplicate requests, confirm broker delivery, or guarantee consumer processing.
