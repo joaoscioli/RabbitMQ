@@ -40,6 +40,13 @@ redelivery. The source queue routes these rejections to its durable DLQ.
 Broker-free `QueueConsumerTests` cover the rejection contract;
 broker acknowledgement and DLQ delivery require integration tests.
 
+The simple listener allows at most three total handler attempts, with 100ms
+then 200ms backoff. Exhausted failures are rejected without requeue and use the
+same DLQ route. `ConsumerRetryTests` exercise the auto-configured retry advice
+without a broker, including recovery on attempt two and rejection after three.
+The current logging consumer has no durable business side effect; handlers added
+later must implement durable idempotency before processing real events.
+
 `queue.name` is the single source for the durable queue declaration, direct
 exchange binding, producer destination, and consumer listener. Broker-free
 `QueueTopologyTests` exercise an overridden queue name; live routing still
