@@ -46,6 +46,9 @@ same DLQ route. `ConsumerRetryTests` exercise the auto-configured retry advice
 without a broker, including recovery on attempt two and rejection after three.
 The current logging consumer has no durable business side effect; handlers added
 later must implement durable idempotency before processing real events.
+Accepted-message logs include only payload character count, keeping private body
+content and embedded newlines out of logs. A broker-free output-capture test
+checks this privacy boundary; character count is not an AMQP byte-size metric.
 
 `queue.name` is the single source for the durable queue declaration, direct
 exchange binding, producer destination, and consumer listener. Broker-free

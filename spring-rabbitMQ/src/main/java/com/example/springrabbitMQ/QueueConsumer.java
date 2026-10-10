@@ -18,6 +18,6 @@ public class QueueConsumer {
         if (fileBody == null || fileBody.isBlank()) {
             throw new AmqpRejectAndDontRequeueException("message payload must not be blank");
         }
-        LOGGER.info("Received RabbitMQ message payload={}", fileBody);
+        LOGGER.info("Received RabbitMQ message payloadCharacters={}", fileBody.length());
     }
 }
