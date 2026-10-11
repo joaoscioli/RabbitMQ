@@ -1,5 +1,8 @@
 package com.example.springrabbitMQ;
 
+import org.springframework.amqp.AmqpConnectException;
+import org.springframework.web.server.ResponseStatusException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,6 +24,25 @@ class MessageControllerTests {
     void setup() {
         sender = mock(QueueSender.class);
         mvc = MockMvcBuilders.standaloneSetup(new MessageController(sender)).build();
+    }
+
+    @Test
+    void brokerFailureReturnsUnavailableWithoutRetryingOrExposingTheDiagnostic() throws Exception {
+        var failure = new AmqpConnectException(new java.net.ConnectException("private broker address"));
+        doThrow(failure).when(sender).send("order-123", "event-456");
+
+        var result = mvc.perform(post("/messages").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"payload\":\"order-123\",\"messageId\":\"event-456\"}"))
+                .andExpect(status().isServiceUnavailable()).andReturn();
+
+        assertThat(result.getResolvedException()).isInstanceOf(ResponseStatusException.class);
+        var exception = (ResponseStatusException) result.getResolvedException();
+        assertThat(exception.getReason()).isEqualTo("Message publishing is unavailable");
+        assertThat(exception.getCause()).isSameAs(failure);
+        assertThat(result.getResponse().getContentAsString()).doesNotContain("private broker address");
+        assertThat(result.getResponse().getErrorMessage()).doesNotContain("private broker address");
+        verify(sender).send("order-123", "event-456");
+        verifyNoMoreInteractions(sender);
     }
 
     @Test

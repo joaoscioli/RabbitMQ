@@ -1,5 +1,7 @@
 package com.example.springrabbitMQ;
 
+import org.springframework.amqp.AmqpException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +25,12 @@ public class MessageController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "payload and messageId must not be blank");
         }
-        sender.send(request.payload, request.messageId);
+        try {
+            sender.send(request.payload, request.messageId);
+        } catch (AmqpException exception) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "Message publishing is unavailable", exception);
+        }
     }
 
     public static class PublishMessage {

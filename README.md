@@ -204,3 +204,8 @@ and returns HTTP 202 after the sender call completes. Missing or blank fields an
 JSON return HTTP 400 before publishing. Repeating the request publishes again with the same
 AMQP message ID, allowing a future durable consumer to recognize a replay. This endpoint
 does not deduplicate requests, confirm broker delivery, or guarantee consumer processing.
+
+An AMQP publishing failure returns HTTP 503 with a generic reason and no automatic
+controller retry. Broker diagnostics remain in the exception cause, outside the
+HTTP response. A failed call can leave delivery uncertain; clients should preserve
+the event ID if they choose to retry, and consumers still need durable deduplication.
