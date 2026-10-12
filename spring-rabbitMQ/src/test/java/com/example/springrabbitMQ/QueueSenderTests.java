@@ -42,7 +42,10 @@ class QueueSenderTests {
         var processor = ArgumentCaptor.forClass(MessagePostProcessor.class);
         verify(rabbitTemplate).convertAndSend(eq("orders.test"), eq((Object) payload), processor.capture());
         var message = new Message(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8), new MessageProperties());
+        message.getMessageProperties().setDeliveryMode(org.springframework.amqp.core.MessageDeliveryMode.NON_PERSISTENT);
         assertSame(message, processor.getValue().postProcessMessage(message));
+        assertEquals(org.springframework.amqp.core.MessageDeliveryMode.PERSISTENT,
+                message.getMessageProperties().getDeliveryMode());
         java.util.UUID.fromString(message.getMessageProperties().getMessageId());
         assertArrayEquals(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8), message.getBody());
         verifyNoMoreInteractions(rabbitTemplate);
@@ -84,7 +87,10 @@ class QueueSenderTests {
                 .convertAndSend(eq("orders.test"), eq((Object) "order-123"), processors.capture());
         for (var processor : processors.getAllValues()) {
             var message = new Message(new byte[] {1, 2}, new MessageProperties());
+            message.getMessageProperties().setDeliveryMode(org.springframework.amqp.core.MessageDeliveryMode.NON_PERSISTENT);
             assertSame(message, processor.postProcessMessage(message));
+            assertEquals(org.springframework.amqp.core.MessageDeliveryMode.PERSISTENT,
+                    message.getMessageProperties().getDeliveryMode());
             assertEquals("event-456", message.getMessageProperties().getMessageId());
             assertArrayEquals(new byte[] {1, 2}, message.getBody());
         }

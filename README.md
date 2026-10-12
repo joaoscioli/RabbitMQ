@@ -190,6 +190,11 @@ a broker integration test; this does not implement retry or idempotency.
 ## Message IDs for Replay
 
 `QueueSender.send(payload)` assigns a new UUID to the AMQP `messageId` property.
+Both generated-ID and replay sends explicitly mark messages `PERSISTENT`, even
+if the converter supplies a non-persistent message. Together with durable queues,
+this requests broker persistence; it does not replace publisher confirms or
+consumer acknowledgements. The broker-free tests check the delivery mode and
+preservation of the event ID and payload.
 Call `send(payload, "event-456")` with a stable application event ID when replaying
 the same event; the producer preserves that ID and the payload. Blank IDs fail
 before publishing. `QueueSenderTests` checks generated IDs, replay ID stability,

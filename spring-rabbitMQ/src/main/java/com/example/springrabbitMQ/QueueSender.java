@@ -31,6 +31,7 @@ public class QueueSender {
         }
         rabbitTemplate.convertAndSend(this.queue.getName(), order, message -> {
             message.getMessageProperties().setMessageId(messageId);
+            message.getMessageProperties().setDeliveryMode(org.springframework.amqp.core.MessageDeliveryMode.PERSISTENT);
             return message;
         });
     }
