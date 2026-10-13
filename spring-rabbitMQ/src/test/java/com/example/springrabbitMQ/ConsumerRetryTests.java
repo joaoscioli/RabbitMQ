@@ -41,6 +41,21 @@ class ConsumerRetryTests {
     }
 
     @Test
+    void blankPayloadExhaustsConfiguredRetriesBeforeRejectingForDeadLettering() {
+        var attempts = new AtomicInteger();
+        var consumer = new QueueConsumer();
+        var listener = advised((channel, message) -> {
+            attempts.incrementAndGet();
+            consumer.receive(" ");
+        });
+
+        assertThatThrownBy(() -> listener.invoke(null, new Message(new byte[0], new MessageProperties())))
+                .hasCauseInstanceOf(AmqpRejectAndDontRequeueException.class)
+                .hasRootCauseMessage("message payload must not be blank");
+        assertThat(attempts).hasValue(3);
+    }
+
+    @Test
     void exhaustedHandlerFailureRejectsAfterExactlyThreeAttempts() {
         var attempts = new AtomicInteger();
         var listener = advised((channel, message) -> {

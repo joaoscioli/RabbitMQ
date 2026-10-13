@@ -44,6 +44,10 @@ The simple listener allows at most three total handler attempts, with 100ms
 then 200ms backoff. Exhausted failures are rejected without requeue and use the
 same DLQ route. `ConsumerRetryTests` exercise the auto-configured retry advice
 without a broker, including recovery on attempt two and rejection after three.
+Even blank payloads rejected by the real consumer pass through all three handler
+attempts before final rejection; the exception prevents broker requeue, but does
+not bypass the configured retry advice. This regression verifies the exception
+chain and attempt count, while actual delivery to the DLQ requires a live broker.
 The current logging consumer has no durable business side effect; handlers added
 later must implement durable idempotency before processing real events.
 Accepted-message logs include only payload character count, keeping private body
@@ -185,7 +189,7 @@ migration or broker policy. Do not remove existing queues containing messages.
 
 `QueueTopologyTests` verifies declarations, routing arguments, durability and
 producer destination without a broker. Actual dead-letter delivery still needs
-a broker integration test; this does not implement retry or idempotency.
+a broker integration test; queue declarations alone do not implement retry or idempotency.
 
 ## Message IDs for Replay
 
