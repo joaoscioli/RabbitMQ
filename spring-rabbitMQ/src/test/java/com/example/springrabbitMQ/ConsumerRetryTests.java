@@ -23,6 +23,30 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
         "spring.rabbitmq.listener.simple.retry.max-interval=2ms"
 })
 class ConsumerRetryTests {
+    @Test
+    void laterDeliveryGetsItsOwnRetryBudgetAfterAnEarlierDeliveryIsRejected() {
+        var failedAttempts = new AtomicInteger();
+        var recoveryAttempts = new AtomicInteger();
+        var failedMessage = new Message(new byte[] {1}, new MessageProperties());
+        var nextMessage = new Message(new byte[] {2}, new MessageProperties());
+        var listener = advised((channel, message) -> {
+            if (message == failedMessage) {
+                failedAttempts.incrementAndGet();
+                throw new IllegalStateException("first delivery fails permanently");
+            }
+            if (recoveryAttempts.incrementAndGet() < 3) {
+                throw new IllegalStateException("next delivery temporarily unavailable");
+            }
+        });
+
+        assertThatThrownBy(() -> listener.invoke(null, failedMessage))
+                .hasCauseInstanceOf(AmqpRejectAndDontRequeueException.class);
+        listener.invoke(null, nextMessage);
+
+        assertThat(failedAttempts).hasValue(3);
+        assertThat(recoveryAttempts).hasValue(3);
+    }
+
     @Autowired
     private SimpleRabbitListenerContainerFactory factory;
 
