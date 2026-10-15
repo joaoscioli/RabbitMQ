@@ -33,6 +33,36 @@ class QueueSenderTests {
     private RabbitTemplate rabbitTemplate;
 
     @Test
+    void explicitRetryAfterConnectionFailurePreservesTheOriginalEventIdAndPayload() {
+        var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
+        var failure = new AmqpConnectException(new java.net.ConnectException("broker unavailable"));
+        org.mockito.Mockito.doThrow(failure).doNothing().when(rabbitTemplate)
+                .convertAndSend(eq("orders.test"), eq((Object) "order-123"), any(MessagePostProcessor.class));
+
+        assertSame(failure, assertThrowsExactly(AmqpConnectException.class,
+                () -> sender.send("order-123", "event-original")));
+        verify(rabbitTemplate).convertAndSend(eq("orders.test"), eq((Object) "order-123"),
+                any(MessagePostProcessor.class));
+        verifyNoMoreInteractions(rabbitTemplate);
+
+        // Publishing may have succeeded before a connection failure: retain the event identity.
+        sender.send("order-123", "event-original");
+
+        var processors = ArgumentCaptor.forClass(MessagePostProcessor.class);
+        verify(rabbitTemplate, org.mockito.Mockito.times(2))
+                .convertAndSend(eq("orders.test"), eq((Object) "order-123"), processors.capture());
+        for (var processor : processors.getAllValues()) {
+            var message = new Message("order-123".getBytes(java.nio.charset.StandardCharsets.UTF_8), new MessageProperties());
+            processor.postProcessMessage(message);
+            assertEquals("event-original", message.getMessageProperties().getMessageId());
+            assertEquals(org.springframework.amqp.core.MessageDeliveryMode.PERSISTENT,
+                    message.getMessageProperties().getDeliveryMode());
+            assertArrayEquals("order-123".getBytes(java.nio.charset.StandardCharsets.UTF_8), message.getBody());
+        }
+        verifyNoMoreInteractions(rabbitTemplate);
+    }
+
+    @Test
     void sendsTheOriginalPayloadToTheConfiguredQueue() {
         QueueSender sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
         String payload = "{\"orderId\":\"order-123\"}";
