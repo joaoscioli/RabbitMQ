@@ -24,6 +24,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 })
 class ConsumerRetryTests {
     @Test
+    void configuredContainerLimitsUnacknowledgedDeliveriesDuringRetries() {
+        var container = factory.createListenerContainer();
+
+        assertThat(new DirectFieldAccessor(container).getPropertyValue("prefetchCount")).isEqualTo(1);
+        assertThat(new DirectFieldAccessor(container).getPropertyValue("acknowledgeMode"))
+                .isEqualTo(org.springframework.amqp.core.AcknowledgeMode.AUTO);
+    }
+
+    @Test
     void laterDeliveryGetsItsOwnRetryBudgetAfterAnEarlierDeliveryIsRejected() {
         var failedAttempts = new AtomicInteger();
         var recoveryAttempts = new AtomicInteger();

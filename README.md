@@ -191,6 +191,15 @@ migration or broker policy. Do not remove existing queues containing messages.
 producer destination without a broker. Actual dead-letter delivery still needs
 a broker integration test; queue declarations alone do not implement retry or idempotency.
 
+The simple listener uses `prefetch=1`: each consumer can hold one unacknowledged
+delivery while its handler retries. With automatic acknowledgements managed by
+the container (`AUTO`), successful processing acknowledges the message; exhausted
+retries reject it. This favors fair distribution and limits deliveries held by a
+slow consumer, at a throughput cost. Tune with
+`SPRING_RABBITMQ_LISTENER_SIMPLE_PREFETCH` after measuring workload and concurrency.
+`ConsumerRetryTests` checks the effective container configuration without a broker;
+it does not measure broker delivery fairness or throughput.
+
 ## Message IDs for Replay
 
 `QueueSender.send(payload)` assigns a new UUID to the AMQP `messageId` property.
