@@ -50,7 +50,13 @@ not bypass the configured retry advice. This regression verifies the exception
 chain and attempt count, while actual delivery to the DLQ requires a live broker.
 The current logging consumer has no durable business side effect; handlers added
 later must implement durable idempotency before processing real events.
-Accepted-message logs include only payload character count, keeping private body
+Accepted-message logs include payload character count and the optional AMQP message
+ID, so the producer's stable ID can be correlated across retries. Use opaque IDs
+without private data. Only 1-128 ASCII letters, digits, dots, underscores, colons
+and hyphens are logged; other IDs become `[invalid]`, and absent or blank IDs
+become `[missing]`. These labels do not reject a valid payload or deduplicate it.
+Broker-free tests cover correlation, length bounds and injected log lines; actual
+header binding still needs a broker integration test. Logs keep private body
 content and embedded newlines out of logs. A broker-free output-capture test
 checks this privacy boundary; character count is not an AMQP byte-size metric.
 

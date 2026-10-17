@@ -79,7 +79,7 @@ class ConsumerRetryTests {
         var consumer = new QueueConsumer();
         var listener = advised((channel, message) -> {
             attempts.incrementAndGet();
-            consumer.receive(" ");
+            consumer.receive(" ", "event-123");
         });
 
         assertThatThrownBy(() -> listener.invoke(null, new Message(new byte[0], new MessageProperties())))
