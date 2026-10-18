@@ -233,3 +233,7 @@ An AMQP publishing failure returns HTTP 503 with a generic reason and no automat
 controller retry. Broker diagnostics remain in the exception cause, outside the
 HTTP response. A failed call can leave delivery uncertain; clients should preserve
 the event ID if they choose to retry, and consumers still need durable deduplication.
+
+### Producer message-ID contract
+
+Both `/messages` and direct `QueueSender.send(payload, messageId)` calls accept only 1-128 ASCII letters, digits, dots, underscores, colons and hyphens. Invalid IDs fail before publishing (HTTP 400 at the API). Preserve the original ID for retries/replay. Consumer logging uses the same format check and continues accepting external messages with missing or unsafe IDs using placeholders. This validation does not provide deduplication.

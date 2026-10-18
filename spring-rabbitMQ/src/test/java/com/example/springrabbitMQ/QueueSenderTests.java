@@ -32,6 +32,28 @@ class QueueSenderTests {
     @Mock
     private RabbitTemplate rabbitTemplate;
 
+    @ParameterizedTest
+    @ValueSource(strings = {"event with spaces", "event\nforged", "café", "event/123"})
+    void rejectsUnsafeEventIdsBeforePublishing(String messageId) {
+        var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
+        assertThrowsExactly(IllegalArgumentException.class, () -> sender.send("order", messageId));
+        verifyNoInteractions(rabbitTemplate);
+    }
+
+    @Test
+    void acceptsTheFullSafeAlphabetAtTheLengthLimitAndRejectsOneMoreCharacter() {
+        var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
+        var messageId = "AZaz09._:-" + "x".repeat(118);
+        assertEquals(128, messageId.length());
+        sender.send("order", messageId);
+        var processor = ArgumentCaptor.forClass(MessagePostProcessor.class);
+        verify(rabbitTemplate).convertAndSend(eq("orders.test"), eq((Object) "order"), processor.capture());
+        var message = processor.getValue().postProcessMessage(new Message(new byte[0], new MessageProperties()));
+        assertEquals(messageId, message.getMessageProperties().getMessageId());
+        assertThrowsExactly(IllegalArgumentException.class, () -> sender.send("order", messageId + "x"));
+        verifyNoMoreInteractions(rabbitTemplate);
+    }
+
     @Test
     void explicitRetryAfterConnectionFailurePreservesTheOriginalEventIdAndPayload() {
         var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));

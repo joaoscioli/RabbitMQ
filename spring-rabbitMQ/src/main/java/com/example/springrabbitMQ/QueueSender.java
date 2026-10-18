@@ -29,6 +29,9 @@ public class QueueSender {
         if (messageId == null || messageId.isBlank()) {
             throw new IllegalArgumentException("messageId must not be blank");
         }
+        if (!MessageIdentity.isValid(messageId)) {
+            throw new IllegalArgumentException("messageId must contain 1-128 ASCII letters, digits, dots, underscores, colons or hyphens");
+        }
         rabbitTemplate.convertAndSend(this.queue.getName(), order, message -> {
             message.getMessageProperties().setMessageId(messageId);
             message.getMessageProperties().setDeliveryMode(org.springframework.amqp.core.MessageDeliveryMode.PERSISTENT);

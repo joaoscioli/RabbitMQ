@@ -30,7 +30,7 @@ public class QueueConsumer {
             return "[missing]";
         }
         // IDs are operational metadata, never free-form text or private content.
-        return messageId.length() <= 128 && messageId.matches("[A-Za-z0-9._:-]+")
+        return MessageIdentity.isValid(messageId)
                 ? messageId : "[invalid]";
     }
 }

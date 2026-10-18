@@ -26,6 +26,28 @@ class MessageControllerTests {
         mvc = MockMvcBuilders.standaloneSetup(new MessageController(sender)).build();
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"event with spaces", "event/123", "café"})
+    void rejectsUnsafeEventIdsWithoutCallingTheSender(String messageId) throws Exception {
+        mvc.perform(post("/messages").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"payload\":\"order\",\"messageId\":\"" + messageId + "\"}"))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(sender);
+    }
+
+    @Test
+    void validatesTheEventIdLengthAtTheHttpBoundary() throws Exception {
+        var boundary = "x".repeat(128);
+        mvc.perform(post("/messages").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"payload\":\"order\",\"messageId\":\"" + boundary + "\"}"))
+                .andExpect(status().isAccepted());
+        verify(sender).send("order", boundary);
+        mvc.perform(post("/messages").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"payload\":\"order\",\"messageId\":\"" + boundary + "x\"}"))
+                .andExpect(status().isBadRequest());
+        verifyNoMoreInteractions(sender);
+    }
+
     @Test
     void brokerFailureReturnsUnavailableWithoutRetryingOrExposingTheDiagnostic() throws Exception {
         var failure = new AmqpConnectException(new java.net.ConnectException("private broker address"));

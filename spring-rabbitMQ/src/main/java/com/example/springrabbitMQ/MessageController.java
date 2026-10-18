@@ -25,6 +25,10 @@ public class MessageController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "payload and messageId must not be blank");
         }
+        if (!MessageIdentity.isValid(request.messageId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "messageId must contain 1-128 ASCII letters, digits, dots, underscores, colons or hyphens");
+        }
         try {
             sender.send(request.payload, request.messageId);
         } catch (AmqpException exception) {
