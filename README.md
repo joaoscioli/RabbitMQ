@@ -237,3 +237,11 @@ the event ID if they choose to retry, and consumers still need durable deduplica
 ### Producer message-ID contract
 
 Both `/messages` and direct `QueueSender.send(payload, messageId)` calls accept only 1-128 ASCII letters, digits, dots, underscores, colons and hyphens. Invalid IDs fail before publishing (HTTP 400 at the API). Preserve the original ID for retries/replay. Consumer logging uses the same format check and continues accepting external messages with missing or unsafe IDs using placeholders. This validation does not provide deduplication.
+
+### Replay retry scope
+
+The offline `ConsumerRetryTests` exercise the actual configured listener advice:
+two deliveries with the same message ID each receive a fresh three-attempt budget.
+Stateless retry does not deduplicate completed events. A replay can repeat business
+side effects; production handlers still need a durable idempotency boundary.
+This test does not start a broker or verify DLQ routing.

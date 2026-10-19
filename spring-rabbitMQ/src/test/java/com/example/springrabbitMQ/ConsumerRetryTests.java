@@ -24,6 +24,32 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 })
 class ConsumerRetryTests {
     @Test
+    void replayWithTheSameEventIdGetsANewRetryBudgetAndIsNotDeduplicated() {
+        var firstAttempts = new AtomicInteger();
+        var replayAttempts = new AtomicInteger();
+        var firstProperties = new MessageProperties();
+        firstProperties.setMessageId("event-replayed");
+        var replayProperties = new MessageProperties();
+        replayProperties.setMessageId("event-replayed");
+        var first = new Message(new byte[] {1}, firstProperties);
+        var replay = new Message(new byte[] {1}, replayProperties);
+        var listener = advised((channel, message) -> {
+            assertThat(message.getMessageProperties().getMessageId()).isEqualTo("event-replayed");
+            var attempts = message == first ? firstAttempts : replayAttempts;
+            if (attempts.incrementAndGet() < 3) {
+                throw new IllegalStateException("transient handler failure");
+            }
+        });
+
+        listener.invoke(null, first);
+        listener.invoke(null, replay);
+
+        // Stateless retry tracks an invocation, not an event ID or completed business work.
+        assertThat(firstAttempts).hasValue(3);
+        assertThat(replayAttempts).hasValue(3);
+    }
+
+    @Test
     void configuredContainerLimitsUnacknowledgedDeliveriesDuringRetries() {
         var container = factory.createListenerContainer();
 
