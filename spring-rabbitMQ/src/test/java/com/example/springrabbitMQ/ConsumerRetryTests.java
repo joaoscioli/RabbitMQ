@@ -24,6 +24,46 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 })
 class ConsumerRetryTests {
     @Test
+    void overlappingDeliveriesWithTheSameIdKeepIndependentRetryBudgets() throws Exception {
+        var entered = new java.util.concurrent.CountDownLatch(2);
+        var first = new Message(new byte[] {1}, new MessageProperties());
+        var second = new Message(new byte[] {2}, new MessageProperties());
+        first.getMessageProperties().setMessageId("shared-event");
+        second.getMessageProperties().setMessageId("shared-event");
+        var firstAttempts = new AtomicInteger();
+        var secondAttempts = new AtomicInteger();
+        var listener = advised((channel, message) -> {
+            var attempts = message == first ? firstAttempts : secondAttempts;
+            if (attempts.incrementAndGet() == 1) {
+                entered.countDown();
+                try {
+                    assertThat(entered.await(5, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(exception);
+                }
+                throw new IllegalStateException("transient failure after overlap");
+            }
+            if (message == first) {
+                throw new IllegalStateException("first delivery never recovers");
+            }
+        });
+        var executor = java.util.concurrent.Executors.newFixedThreadPool(2);
+        try {
+            var rejected = executor.submit(() -> assertThatThrownBy(() -> listener.invoke(null, first))
+                    .hasCauseInstanceOf(AmqpRejectAndDontRequeueException.class));
+            var recovered = executor.submit(() -> listener.invoke(null, second));
+            rejected.get(10, java.util.concurrent.TimeUnit.SECONDS);
+            recovered.get(10, java.util.concurrent.TimeUnit.SECONDS);
+            assertThat(firstAttempts).hasValue(3);
+            assertThat(secondAttempts).hasValue(2);
+        } finally {
+            executor.shutdownNow();
+            assertThat(executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+        }
+    }
+
+    @Test
     void replayWithTheSameEventIdGetsANewRetryBudgetAndIsNotDeduplicated() {
         var firstAttempts = new AtomicInteger();
         var replayAttempts = new AtomicInteger();
