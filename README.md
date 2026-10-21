@@ -245,3 +245,9 @@ two deliveries with the same message ID each receive a fresh three-attempt budge
 Stateless retry does not deduplicate completed events. A replay can repeat business
 side effects; production handlers still need a durable idempotency boundary.
 This test does not start a broker or verify DLQ routing.
+
+`MessageConversionWorkflowTests` composes the real sender, Spring AMQP string
+converter, and consumer across an in-memory transport. It checks UTF-8 JSON and
+multiline payload round trips, persistent delivery metadata, stable event identity,
+and payload-free logs. It does not exercise broker routing, acknowledgments, or
+DLQ delivery.
