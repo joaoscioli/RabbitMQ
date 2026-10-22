@@ -41,6 +41,35 @@ class QueueSenderTests {
     }
 
     @Test
+    void assigningReplayIdentityPreservesTraceHeadersAndExistingMessageEnvelope() {
+        var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
+        sender.send("order-123", "event-replay");
+        var processor = ArgumentCaptor.forClass(MessagePostProcessor.class);
+        verify(rabbitTemplate).convertAndSend(eq("orders.test"), eq((Object) "order-123"), processor.capture());
+        var properties = new MessageProperties();
+        properties.setHeader("traceparent", "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01");
+        properties.setCorrelationId("request-123");
+        properties.setContentType("application/json");
+        properties.setContentEncoding("UTF-8");
+        properties.setExpiration("60000");
+        properties.setMessageId("old-id");
+        properties.setDeliveryMode(org.springframework.amqp.core.MessageDeliveryMode.NON_PERSISTENT);
+        var message = new Message(new byte[] {1, 2, 3}, properties);
+
+        assertSame(message, processor.getValue().postProcessMessage(message));
+        assertSame(properties, message.getMessageProperties());
+        assertEquals("event-replay", properties.getMessageId());
+        assertEquals(org.springframework.amqp.core.MessageDeliveryMode.PERSISTENT, properties.getDeliveryMode());
+        assertEquals("00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01", properties.getHeader("traceparent"));
+        assertEquals("request-123", properties.getCorrelationId());
+        assertEquals("application/json", properties.getContentType());
+        assertEquals("UTF-8", properties.getContentEncoding());
+        assertEquals("60000", properties.getExpiration());
+        assertArrayEquals(new byte[] {1, 2, 3}, message.getBody());
+        verifyNoMoreInteractions(rabbitTemplate);
+    }
+
+    @Test
     void acceptsTheFullSafeAlphabetAtTheLengthLimitAndRejectsOneMoreCharacter() {
         var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
         var messageId = "AZaz09._:-" + "x".repeat(118);
