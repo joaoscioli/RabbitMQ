@@ -114,6 +114,30 @@ class QueueSenderTests {
     }
 
     @Test
+    void independentlyGeneratedIdsStayBoundToTheirOwnDeferredPostProcessors() {
+        var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
+        sender.send("same-payload");
+        sender.send("same-payload");
+        var processors = ArgumentCaptor.forClass(MessagePostProcessor.class);
+        verify(rabbitTemplate, org.mockito.Mockito.times(2)).convertAndSend(
+                eq("orders.test"), eq((Object) "same-payload"), processors.capture());
+        var first = processors.getAllValues().get(0);
+        var second = processors.getAllValues().get(1);
+        // Apply callbacks out of submission order, then apply the first again.
+        var secondMessage = second.postProcessMessage(new Message(new byte[0], new MessageProperties()));
+        var firstMessage = first.postProcessMessage(new Message(new byte[0], new MessageProperties()));
+        var repeatedFirst = first.postProcessMessage(new Message(new byte[0], new MessageProperties()));
+        var firstId = firstMessage.getMessageProperties().getMessageId();
+        var secondId = secondMessage.getMessageProperties().getMessageId();
+
+        java.util.UUID.fromString(firstId);
+        java.util.UUID.fromString(secondId);
+        org.junit.jupiter.api.Assertions.assertNotEquals(firstId, secondId);
+        assertEquals(firstId, repeatedFirst.getMessageProperties().getMessageId());
+        verifyNoMoreInteractions(rabbitTemplate);
+    }
+
+    @Test
     void sendsTheOriginalPayloadToTheConfiguredQueue() {
         QueueSender sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
         String payload = "{\"orderId\":\"order-123\"}";
