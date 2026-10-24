@@ -24,6 +24,38 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 })
 class ConsumerRetryTests {
     @Test
+    void retriesKeepTheSameEnvelopeAndBrokerRedeliveryMetadata() {
+        var properties = new MessageProperties();
+        properties.setMessageId("event-retry");
+        properties.setCorrelationId("request-123");
+        properties.setRedelivered(true);
+        properties.setHeader("traceparent", "trace-123");
+        var body = "order-123".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        var original = new Message(body, properties);
+        var channel = org.mockito.Mockito.mock(Channel.class);
+        var attempts = new AtomicInteger();
+        var listener = advised((receivedChannel, message) -> {
+            assertThat(receivedChannel).isSameAs(channel);
+            assertThat(message).isSameAs(original);
+            assertThat(message.getBody()).containsExactly(body);
+            assertThat(message.getMessageProperties()).isSameAs(properties);
+            assertThat(properties.getMessageId()).isEqualTo("event-retry");
+            assertThat(properties.getCorrelationId()).isEqualTo("request-123");
+            assertThat(properties.isRedelivered()).isTrue();
+            assertThat(properties.<String>getHeader("traceparent")).isEqualTo("trace-123");
+            if (attempts.incrementAndGet() < 3) {
+                throw new IllegalStateException("transient failure");
+            }
+        });
+
+        listener.invoke(channel, original);
+
+        assertThat(attempts).hasValue(3);
+        // In-process advice does not acknowledge or requeue through the broker.
+        org.mockito.Mockito.verifyNoInteractions(channel);
+    }
+
+    @Test
     void overlappingDeliveriesWithTheSameIdKeepIndependentRetryBudgets() throws Exception {
         var entered = new java.util.concurrent.CountDownLatch(2);
         var first = new Message(new byte[] {1}, new MessageProperties());
