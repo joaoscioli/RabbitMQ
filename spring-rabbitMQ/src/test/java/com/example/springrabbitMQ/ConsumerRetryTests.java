@@ -24,6 +24,30 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 })
 class ConsumerRetryTests {
     @Test
+    void validDeliveryAfterPoisonPayloadSucceedsOnItsFirstAttempt() {
+        var converter = new org.springframework.amqp.support.converter.SimpleMessageConverter();
+        var consumer = new QueueConsumer();
+        var poison = converter.toMessage(" ", new MessageProperties());
+        var valid = converter.toMessage("order-123", new MessageProperties());
+        var poisonAttempts = new AtomicInteger();
+        var validAttempts = new AtomicInteger();
+        var listener = advised((channel, message) -> {
+            (message == poison ? poisonAttempts : validAttempts).incrementAndGet();
+            consumer.receive((String) converter.fromMessage(message), message.getMessageProperties().getMessageId());
+        });
+        var channel = org.mockito.Mockito.mock(Channel.class);
+
+        assertThatThrownBy(() -> listener.invoke(channel, poison))
+                .hasCauseInstanceOf(AmqpRejectAndDontRequeueException.class)
+                .hasRootCauseMessage("message payload must not be blank");
+        listener.invoke(channel, valid);
+
+        assertThat(poisonAttempts).hasValue(3);
+        assertThat(validAttempts).hasValue(1);
+        org.mockito.Mockito.verifyNoInteractions(channel);
+    }
+
+    @Test
     void retriesKeepTheSameEnvelopeAndBrokerRedeliveryMetadata() {
         var properties = new MessageProperties();
         properties.setMessageId("event-retry");
