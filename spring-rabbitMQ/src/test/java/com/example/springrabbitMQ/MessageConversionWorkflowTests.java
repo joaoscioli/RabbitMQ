@@ -20,6 +20,29 @@ import static org.mockito.Mockito.*;
 /** Real sender/converter/consumer with an in-memory replacement for broker transport. */
 @ExtendWith(OutputCaptureExtension.class)
 class MessageConversionWorkflowTests {
+    @org.junit.jupiter.api.Test
+    void redeliveryOfTheSameEventStillReachesTheConsumerTwice(CapturedOutput output) {
+        var converter = new SimpleMessageConverter();
+        var consumer = new QueueConsumer();
+        var properties = new MessageProperties();
+        properties.setMessageId("event-redelivery");
+        var original = converter.toMessage("private-order-body", properties);
+        var redelivery = new org.springframework.amqp.core.Message(
+                original.getBody().clone(), org.springframework.amqp.core.MessagePropertiesBuilder
+                        .fromClonedProperties(properties).setRedelivered(true).build());
+
+        for (var message : java.util.List.of(original, redelivery)) {
+            assertThat(converter.fromMessage(message)).isEqualTo("private-order-body");
+            consumer.receive((String) converter.fromMessage(message), message.getMessageProperties().getMessageId());
+        }
+
+        assertThat(redelivery.getMessageProperties().isRedelivered()).isTrue();
+        assertThat(output.getOut().lines().filter(line -> line.contains("messageId=event-redelivery")).count())
+                .isEqualTo(2);
+        assertThat(output.getAll()).doesNotContain("private-order-body");
+        // Message IDs support correlation; this consumer has no durable deduplication store.
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"{\"customer\":\"João\",\"item\":\"♟\"}", "private-order\nsecond-line"})
     void producerMetadataAndUtf8PayloadSurviveConversionWithoutPayloadLogging(String payload, CapturedOutput output) {
