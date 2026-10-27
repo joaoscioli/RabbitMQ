@@ -40,6 +40,19 @@ class QueueSenderTests {
         verifyNoInteractions(rabbitTemplate);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"event\rFORGED", "event\tFORGED", "event\u001b[31m", "event\u2028FORGED", "event\u202e123"})
+    void rejectsControlAndUnicodeFormattingCharactersBeforePublishing(String messageId) {
+        var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
+
+        var failure = assertThrowsExactly(IllegalArgumentException.class,
+                () -> sender.send("order", messageId));
+
+        assertEquals("messageId must contain 1-128 ASCII letters, digits, dots, underscores, colons or hyphens",
+                failure.getMessage());
+        verifyNoInteractions(rabbitTemplate);
+    }
+
     @Test
     void assigningReplayIdentityPreservesTraceHeadersAndExistingMessageEnvelope() {
         var sender = new QueueSender(rabbitTemplate, new Queue("orders.test"));
