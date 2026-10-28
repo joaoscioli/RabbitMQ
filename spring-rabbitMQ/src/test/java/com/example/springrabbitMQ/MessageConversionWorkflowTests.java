@@ -21,6 +21,40 @@ import static org.mockito.Mockito.*;
 @ExtendWith(OutputCaptureExtension.class)
 class MessageConversionWorkflowTests {
     @org.junit.jupiter.api.Test
+    void httpReplayPreservesTheEventIdentityThroughTheRealSenderAndConverter() throws Exception {
+        var transport = mock(RabbitTemplate.class);
+        var converter = new SimpleMessageConverter();
+        var published = new java.util.ArrayList<org.springframework.amqp.core.Message>();
+        doAnswer(invocation -> {
+            var message = converter.toMessage(invocation.getArgument(1), new MessageProperties());
+            MessagePostProcessor processor = invocation.getArgument(2);
+            published.add(processor.postProcessMessage(message));
+            return null;
+        }).when(transport).convertAndSend(eq("orders.http"), any(Object.class), any(MessagePostProcessor.class));
+        var sender = new QueueSender(transport, new Queue("orders.http"));
+        var mvc = org.springframework.test.web.servlet.setup.MockMvcBuilders
+                .standaloneSetup(new MessageController(sender)).build();
+
+        for (int attempt = 0; attempt < 2; attempt++) {
+            mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/messages")
+                            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                            .content("{\"payload\":\"order-123\",\"messageId\":\"event-http-123\"}"))
+                    .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isAccepted());
+        }
+
+        assertThat(published).hasSize(2);
+        assertThat(published.get(0)).isNotSameAs(published.get(1));
+        for (var message : published) {
+            assertThat(converter.fromMessage(message)).isEqualTo("order-123");
+            assertThat(message.getMessageProperties().getMessageId()).isEqualTo("event-http-123");
+            assertThat(message.getMessageProperties().getDeliveryMode()).isEqualTo(MessageDeliveryMode.PERSISTENT);
+        }
+        verify(transport, times(2)).convertAndSend(eq("orders.http"), eq((Object) "order-123"), any(MessagePostProcessor.class));
+        verifyNoMoreInteractions(transport);
+        // Replays publish again with a stable ID; durable consumer deduplication remains separate.
+    }
+
+    @org.junit.jupiter.api.Test
     void redeliveryOfTheSameEventStillReachesTheConsumerTwice(CapturedOutput output) {
         var converter = new SimpleMessageConverter();
         var consumer = new QueueConsumer();
