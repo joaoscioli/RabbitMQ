@@ -68,6 +68,24 @@ class MessageControllerTests {
     }
 
     @Test
+    void explicitReplayAfterBrokerRecoveryPreservesTheOriginalEventIdentity() throws Exception {
+        var failure = new AmqpConnectException(new java.net.ConnectException("private broker address"));
+        doThrow(failure).doNothing().when(sender).send("order-123", "event-456");
+        var body = "{\"payload\":\"order-123\",\"messageId\":\"event-456\"}";
+
+        mvc.perform(post("/messages").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isServiceUnavailable());
+        verify(sender).send("order-123", "event-456");
+        verifyNoMoreInteractions(sender);
+
+        // Caller replay, rather than an implicit retry of an uncertain publish outcome.
+        mvc.perform(post("/messages").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isAccepted());
+        verify(sender, times(2)).send("order-123", "event-456");
+        verifyNoMoreInteractions(sender);
+    }
+
+    @Test
     void repeatedRequestsPreserveTheCallerEventIdAndPayload() throws Exception {
         for (int attempt = 0; attempt < 2; attempt++) {
             mvc.perform(post("/messages").contentType(MediaType.APPLICATION_JSON)
