@@ -28,6 +28,12 @@ This lab focuses on:
 
 ## Current Scope
 
+Mandatory publisher returns now log the broker reply code and payload byte count.
+The callback excludes payload, message ID, reply text, exchange and routing key,
+and never republishes automatically. Returns arrive asynchronously: HTTP 202
+still does not confirm routing or consumer processing. A broker-free callback
+test covers safe diagnostics; actual unroutable delivery requires a live broker.
+
 The existing `spring-rabbitMQ` folder is preserved as part of the repository
 history and will be progressively reorganized into clearer labs.
 
