@@ -19,6 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class QueueConsumerTests {
     private final QueueConsumer consumer = new QueueConsumer();
 
+    @Test
+    void rejectedDeliveryDoesNotPreventTheNextValidMessage(CapturedOutput output) {
+        assertThrows(AmqpRejectAndDontRequeueException.class,
+                () -> consumer.receive("   ", "rejected-event"));
+        consumer.receive("valid payload", "next-event");
+
+        assertThat(output.getAll()).contains("payloadCharacters=13 messageId=next-event")
+                .doesNotContain("messageId=rejected-event");
+    }
+
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", "\t", "\n"})
