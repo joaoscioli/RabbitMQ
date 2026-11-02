@@ -12,6 +12,12 @@ public class TesteController {
         this.sender = sender;
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(org.springframework.amqp.AmqpException.class)
+    @org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE)
+    public String unavailable() {
+        return "Message publishing is unavailable";
+    }
+
     @GetMapping
     public String sends() {
         sender.send("test message");
